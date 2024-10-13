@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 
 def make_pts(N: int) -> List[Tuple[float, float]]:
+    """Generate a list of size N cantaining 2d points"""
     X = []
     for i in range(N):
         x_1 = random.random()
@@ -21,6 +22,7 @@ class Graph:
 
 
 def simple(N: int) -> Graph:
+    """Generates a graph where 1s are on the left while 0s are on the right."""
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -30,6 +32,7 @@ def simple(N: int) -> Graph:
 
 
 def diag(N: int) -> Graph:
+    """Generates a graph where 1s are on the bottom left triangle corner"""
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -39,6 +42,7 @@ def diag(N: int) -> Graph:
 
 
 def split(N: int) -> Graph:
+    """Generates a graph where 0s are in the middle (between 0.2 and 0.8)"""
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -48,6 +52,7 @@ def split(N: int) -> Graph:
 
 
 def xor(N: int) -> Graph:
+    """Generate a graph representing an XOR dataset of size N."""
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -57,6 +62,7 @@ def xor(N: int) -> Graph:
 
 
 def circle(N: int) -> Graph:
+    """Create a circle with radius N"""
     X = make_pts(N)
     y = []
     for x_1, x_2 in X:
@@ -67,6 +73,8 @@ def circle(N: int) -> Graph:
 
 
 def spiral(N: int) -> Graph:
+    """Create a spiral with radius N"""
+
     def x(t: float) -> float:
         return t * math.cos(t) / 20.0
 
