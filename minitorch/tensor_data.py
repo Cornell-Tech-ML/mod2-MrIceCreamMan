@@ -88,11 +88,14 @@ def broadcast_index(
         None
 
     """
-    new_shape = [0] * (len(big_shape) - len(shape)) + shape
-    out_index = big_index
+    new_shape = [0] * (len(big_shape) - len(shape))
+    for s in shape:
+        new_shape.append(s)
     for i in range(len(out_index)):
         if new_shape[i] < big_shape[i]:
             out_index[i] = 0
+        else:
+            out_index[i] = big_index[i]
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
