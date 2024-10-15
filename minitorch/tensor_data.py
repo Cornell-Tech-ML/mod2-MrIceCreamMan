@@ -10,8 +10,6 @@ import numpy.typing as npt
 from numpy import array, float64
 from typing_extensions import TypeAlias
 
-from .operators import prod
-
 MAX_DIMS = 32
 
 
@@ -185,7 +183,7 @@ class TensorData:
         self._shape = array(shape)
         self.strides = strides
         self.dims = len(strides)
-        self.size = int(prod(shape))
+        self.size = len(storage)
         self.shape = shape
         assert len(self._storage) == self.size
 

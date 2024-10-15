@@ -164,7 +164,7 @@ class Tensor:
     @property
     def size(self) -> int:
         """Returns total size of the tensor"""
-        return int(operators.prod(self._tensor.shape))
+        return self._tensor.size
 
     def all(self, dim: TensorLike = -1) -> Tensor:
         """All function f(x) = 1 if all x are true"""
@@ -345,7 +345,7 @@ class Tensor:
         assert self.is_leaf(), "Only leaf variables can have derivatives."
         if self.grad is None:
             self.grad = Tensor.make(
-                [0.0] * int(operators.prod(self.shape)),
+                [0.0] * self.size,
                 self.shape,
                 backend=self.backend,
             )

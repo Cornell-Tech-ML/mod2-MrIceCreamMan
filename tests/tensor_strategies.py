@@ -12,7 +12,7 @@ from hypothesis.strategies import (
 )
 
 import minitorch
-from minitorch import Tensor, TensorBackend, TensorData, UserIndex, UserShape
+from minitorch import Tensor, TensorBackend, TensorData, UserIndex, UserShape, operators
 
 from .strategies import small_ints
 
@@ -46,7 +46,7 @@ def tensor_data(
 ) -> TensorData:
     if shape is None:
         shape = draw(shapes())
-    size = int(minitorch.prod(shape))
+    size = int(operators.prod(shape))
     data = draw(lists(numbers, min_size=size, max_size=size))
     permute: List[int] = draw(permutations(range(len(shape))))
     permute_shape = tuple([shape[i] for i in permute])
@@ -112,7 +112,7 @@ def matmul_tensors(
     l2 = (j, k)
     values = []
     for shape in [l1, l2]:
-        size = int(minitorch.prod(shape))
+        size = int(operators.prod(shape))
         data = draw(lists(numbers, min_size=size, max_size=size))
         values.append(minitorch.Tensor(minitorch.TensorData(data, shape)))
     return values
