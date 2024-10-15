@@ -106,41 +106,41 @@ class Tensor:
         self._tensor.set(key2, val)
 
     def __add__(self, b: TensorLike) -> Tensor:
-        return Add.apply(self, self._ensure_tensor(b))
+        return Add.apply(self, self._ensure_tensor(b, True))
 
     def __radd__(self, b: TensorLike) -> Tensor:
-        return Add.apply(self, self._ensure_tensor(b))
+        return Add.apply(self, self._ensure_tensor(b, True))
 
     def __sub__(self, b: TensorLike) -> Tensor:
-        return Add.apply(self, Neg.apply(self._ensure_tensor(b)))
+        return Add.apply(self, Neg.apply(self._ensure_tensor(b, True)))
 
     def __neg__(self) -> Tensor:
         return Neg.apply(self)
 
     def __mul__(self, b: TensorLike) -> Tensor:
-        return Mul.apply(self, self._ensure_tensor(b))
+        return Mul.apply(self, self._ensure_tensor(b, True))
 
     def __rmul__(self, b: TensorLike) -> Tensor:
-        return Mul.apply(self, self._ensure_tensor(b))
+        return Mul.apply(self, self._ensure_tensor(b, True))
 
     def __truediv__(self, b: TensorLike) -> Tensor:
-        return Mul.apply(self, Inv.apply(self._ensure_tensor(b)))
+        return Mul.apply(self, Inv.apply(self._ensure_tensor(b, True)))
 
     def __rtruediv__(self, b: TensorLike) -> Tensor:
-        return Mul.apply(self._ensure_tensor(b), Inv.apply(self))
+        return Mul.apply(self._ensure_tensor(b, True), Inv.apply(self))
 
     def __lt__(self, b: TensorLike) -> Tensor:
-        return LT.apply(self, self._ensure_tensor(b))
+        return LT.apply(self, self._ensure_tensor(b, True))
 
     def __gt__(self, b: TensorLike) -> Tensor:
-        return LT.apply(Neg.apply(self), Neg.apply(self._ensure_tensor(b)))
+        return LT.apply(Neg.apply(self), Neg.apply(self._ensure_tensor(b, True)))
 
     def __eq__(self, b: TensorLike) -> Tensor:
-        return EQ.apply(self, self._ensure_tensor(b))
+        return EQ.apply(self, self._ensure_tensor(b, True))
 
     def __ne__(self, b: TensorLike) -> Tensor:
-        eq = EQ.apply(self, self._ensure_tensor(b))
-        return Add.apply(self._ensure_tensor(1), Neg.apply(eq))
+        eq = EQ.apply(self, self._ensure_tensor(b, True))
+        return Add.apply(self._ensure_tensor(1, True), Neg.apply(eq))
 
     def __matmul__(self, b: Tensor) -> Tensor:
         """Not used until Module 3"""
@@ -193,25 +193,29 @@ class Tensor:
 
     def sum(self, dim: TensorLike = -1) -> Tensor:
         """Function to calculate summation"""
-        return Sum.apply(self, self._ensure_tensor(dim))
+        return Sum.apply(self, self._ensure_tensor(dim, True))
 
     def mean(self, dim: TensorLike = -1) -> Tensor:
         """Function to calculate mean"""
-        dim_t = self._ensure_tensor(dim)
+        dim_t = self._ensure_tensor(dim, True)
         dim = int(dim_t.item())
         if dim < 0:
             return Sum.apply(self, dim_t) / self.size
         return Sum.apply(self, dim_t) / self.shape[dim]
 
-    def permute(self, dims: TensorLike = -1) -> Tensor:
+    def permute(self, *permutation: int) -> Tensor:
         """Function to permute tensor"""
-        return Permute.apply(self, self._ensure_tensor(dims))
+        data = [float(d) for d in permutation]
+        perm = Tensor.make(data, (len(data),), backend=self.backend)
+        perm.requires_grad_(True)
+        return Permute.apply(self, perm)
 
-    def view(self, dim: int = -1) -> Tensor:
+    def view(self, *shape: int) -> Tensor:
         """Function to reshape tensor"""
-        if dim == -1:
-            dim = int(operators.prod(self.shape))
-        return View.apply(self, self._ensure_tensor(dim))
+        data = [float(d) for d in shape]
+        new_shape = Tensor.make(data, (len(data),), backend=self.backend)
+        new_shape.requires_grad_(True)
+        return View.apply(self, new_shape)
 
     def requires_grad_(self, x: bool) -> None:
         """Initialize gradient history"""
@@ -228,10 +232,12 @@ class Tensor:
         """
         return self.contiguous()._tensor._storage.reshape(self.shape)
 
-    def _ensure_tensor(self, b: TensorLike) -> Tensor:
+    def _ensure_tensor(self, b: TensorLike, keep_history: bool = False) -> Tensor:
         """Turns a python number into a tensor with the same backend."""
         if isinstance(b, (int, float)):
             c = Tensor.make([b], (1,), backend=self.backend)
+            if keep_history:
+                c.requires_grad_(True)
         else:
             b._type_(self.backend)
             c = b

@@ -82,29 +82,28 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     sorted_list = []
     visited = set()
 
-    def dfs(scalar: Variable) -> None:
-        print(scalar.unique_id)
-        if scalar.unique_id in visited:
+    def dfs(variable: Variable) -> None:
+        if variable.unique_id in visited:
             return
 
-        for parent in scalar.parents:
+        for parent in variable.parents:
             dfs(parent)
 
-        visited.add(scalar.unique_id)
-        sorted_list.append(scalar)
+        visited.add(variable.unique_id)
+        sorted_list.append(variable)
 
     dfs(variable)
     sorted_list.reverse()
     return sorted_list
 
 
-def backpropagate(variable: Variable, deriv: Any) -> None:
+def backpropagate(root: Variable, deriv: Any) -> None:
     """Runs backpropagation on the computation graph in order to
     compute derivatives for the leave nodes.
 
     Args:
     ----
-        variable: The right-most variable
+        root: The right-most variable
         deriv  : Its derivative that we want to propagate backward to the leaves.
 
     Returns:
@@ -112,20 +111,20 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
         None: Updates the derivative values of each leaf through accumulate_derivative`.
 
     """
-    scalar_sorted = topological_sort(variable)
-    scalar_to_derivative = {}
-    for scalar in scalar_sorted:
-        scalar_to_derivative[scalar.unique_id] = 0
-    scalar_to_derivative[variable.unique_id] = deriv
+    children_sorted = topological_sort(root)
+    derivative_map = {}
+    for child in children_sorted:
+        derivative_map[child.unique_id] = 0
+    derivative_map[root.unique_id] = deriv
 
-    for scalar in scalar_sorted:
-        d = scalar_to_derivative[scalar.unique_id]
-        if scalar.is_leaf():
-            scalar.accumulate_derivative(d)
+    for child in children_sorted:
+        d = derivative_map[child.unique_id]
+        if child.is_leaf():
+            child.accumulate_derivative(d)
         else:
-            partials = scalar.chain_rule(d)
-            for var, partial in partials:
-                scalar_to_derivative[var.unique_id] += partial
+            chain_rule_result = child.chain_rule(d)
+            for respect_x, partial_df_dx in chain_rule_result:
+                derivative_map[respect_x.unique_id] += partial_df_dx
 
 
 @dataclass

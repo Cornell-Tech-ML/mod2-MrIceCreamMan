@@ -76,20 +76,6 @@ class Add(Function):
         return g_output, g_output
 
 
-class Log(Function):
-    @staticmethod
-    def forward(ctx: Context, t1: Tensor) -> Tensor:
-        """Log function"""
-        ctx.save_for_backward(t1)
-        return t1.f.log_map(t1)
-
-    @staticmethod
-    def backward(ctx: Context, g_output: Tensor) -> Tensor:
-        """Derivative of log function"""
-        (t1,) = ctx.saved_values
-        return g_output.f.log_back_zip(g_output, t1)
-
-
 class Mul(Function):
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
@@ -130,6 +116,61 @@ class Neg(Function):
         return g_output.f.neg_map(g_output)
 
 
+class Log(Function):
+    @staticmethod
+    def forward(ctx: Context, t1: Tensor) -> Tensor:
+        """Log function"""
+        ctx.save_for_backward(t1)
+        return t1.f.log_map(t1)
+
+    @staticmethod
+    def backward(ctx: Context, g_output: Tensor) -> Tensor:
+        """Derivative of log function"""
+        (t1,) = ctx.saved_values
+        return t1.f.log_back_zip(t1, g_output)
+
+
+class Exp(Function):
+    @staticmethod
+    def forward(ctx: Context, t1: Tensor) -> Tensor:
+        """Exponential function"""
+        exp_t1 = t1.f.exp_map(t1)
+        ctx.save_for_backward(exp_t1)
+        return exp_t1
+
+    @staticmethod
+    def backward(ctx: Context, g_output: Tensor) -> Tensor:
+        """Derivative of exponential function"""
+        (exp_t1,) = ctx.saved_values
+        return exp_t1 * g_output
+
+
+class LT(Function):
+    @staticmethod
+    def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
+        """Less-than function"""
+        return t1.f.lt_zip(t1, t2)
+
+    @staticmethod
+    def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, Tensor]:
+        """Derivative of less-than function"""
+        c0 = minitorch.Tensor.make([0], (1,), backend=g_output.backend)
+        return c0, c0
+
+
+class EQ(Function):
+    @staticmethod
+    def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
+        """Equality function"""
+        return t1.f.eq_zip(t1, t2)
+
+    @staticmethod
+    def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, Tensor]:
+        """Derivative of equality function"""
+        c0 = minitorch.Tensor.make([0], (1,), backend=g_output.backend)
+        return g_output * c0, g_output * c0
+
+
 class Sigmoid(Function):
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
@@ -142,7 +183,8 @@ class Sigmoid(Function):
     def backward(ctx: Context, g_output: Tensor) -> Tensor:
         """Derivative of sigmoid function"""
         (sig_t1,) = ctx.saved_values
-        return (1 - sig_t1) * sig_t1 * g_output
+        c1 = minitorch.Tensor.make([1], (1,), backend=g_output.backend)
+        return (c1 - sig_t1) * sig_t1 * g_output
 
 
 class ReLU(Function):
@@ -159,51 +201,21 @@ class ReLU(Function):
         return g_output.f.relu_back_zip(t1, g_output)
 
 
-class Exp(Function):
-    @staticmethod
-    def forward(ctx: Context, t1: Tensor) -> Tensor:
-        """Exponential function"""
-        ctx.save_for_backward(t1)
-        return t1.f.exp_map(t1)
-
-    @staticmethod
-    def backward(ctx: Context, g_output: Tensor) -> Tensor:
-        """Derivative of exponential function"""
-        (t1,) = ctx.saved_values
-        return g_output.f.exp_map(t1) * g_output
-
-
-class LT(Function):
-    @staticmethod
-    def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
-        """Less-than function"""
-        return t1.f.lt_zip(t1, t2)
-
-    @staticmethod
-    def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, Tensor]:
-        """Derivative of less-than function"""
-        t0 = minitorch.Tensor.make([0], [1])
-        return g_output * t0, g_output * t0
-
-
-class EQ(Function):
-    @staticmethod
-    def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
-        """Equality function"""
-        return t1.f.eq_zip(t1, t2)
-
-    @staticmethod
-    def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, Tensor]:
-        """Derivative of equality function"""
-        t0 = minitorch.Tensor.make([0], [1])
-        return g_output * t0, g_output * t0
-
-
 class Sum(Function):
     @staticmethod
     def forward(ctx: Context, t1: Tensor, dim: Tensor) -> Tensor:
         """Summation function"""
-        return t1.f.add_reduce(t1, int(dim.item()))
+        dim_int = int(dim.item())
+        ctx.save_for_backward(dim_int)
+        return t1.f.add_reduce(t1, dim_int)
+
+    @staticmethod
+    def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, float]:
+        """Derivative of equality function"""
+        # (dim_int,) = ctx.saved_values
+        # if dim_int < 0:
+        #     return minitorch.Tensor.make([1], [1], backend=g_output.backend)
+        return g_output, 0.0
 
 
 class IsClose(Function):
@@ -215,10 +227,11 @@ class IsClose(Function):
 
 class Permute(Function):
     @staticmethod
-    def forward(ctx: Context, a: Tensor, order: Tensor) -> Tensor:
+    def forward(ctx: Context, a: Tensor, permutation: Tensor) -> Tensor:
         """Permute function"""
         ctx.save_for_backward(a.shape)
-        data: TensorData = a._tensor.permute(*order.view().to_numpy())
+        order = [int(d) for d in permutation.to_numpy()]
+        data: TensorData = a._tensor.permute(*order)
         return minitorch.Tensor.make(data._storage, data.shape, backend=a.backend)
 
     @staticmethod
