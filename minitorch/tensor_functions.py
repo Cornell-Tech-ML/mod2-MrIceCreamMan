@@ -212,9 +212,6 @@ class Sum(Function):
     @staticmethod
     def backward(ctx: Context, g_output: Tensor) -> Tuple[Tensor, float]:
         """Derivative of equality function"""
-        # (dim_int,) = ctx.saved_values
-        # if dim_int < 0:
-        #     return minitorch.Tensor.make([1], [1], backend=g_output.backend)
         return g_output, 0.0
 
 
