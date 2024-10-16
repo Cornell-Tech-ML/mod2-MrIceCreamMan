@@ -185,6 +185,24 @@ def test_fromnumpy() -> None:
 
 
 # Student Submitted Tests
+def test_chain_rule() -> None:
+    w1 = tensor([[1, 2, 3], [2, 3, 4]])
+    b1 = tensor([5, 6, 7])
+
+    x1 = tensor([[5, 10], [1, 2], [3, 6]])
+    # print(f"x1 shape: {x1.shape}, val: {x1}")
+    x2 = x1.view(*x1.shape, 1)
+    # print(f"x2 shape: {x2.shape}, val: {x2}")
+    x3 = x2 * w1
+    # print(f"x3 shape: {x3.shape}, val: {x3}")
+    x4 = x3.sum(1)
+    # print(f"x4 shape: {x4.shape}, val: {x4}")
+    x5 = x4 + b1
+    # print(f"x5 shape: {x5.shape}, val: {x5}")
+    x6 = x5.view(x5.shape[0], x5.shape[2])
+    # print(f"x6 shape: {x6.shape}, val: {x6}")
+    x7 = x6.relu()
+    x7.backward()
 
 
 @pytest.mark.task2_3

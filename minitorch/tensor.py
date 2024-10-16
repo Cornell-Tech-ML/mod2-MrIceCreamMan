@@ -91,6 +91,7 @@ class Tensor:
         else:
             self.name = str(self.unique_id)
 
+        assert self._tensor.size == operators.prod(self._tensor.shape)
         self.f = backend
 
     def __repr__(self) -> str:

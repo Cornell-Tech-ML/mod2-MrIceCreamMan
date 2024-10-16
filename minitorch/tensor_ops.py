@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from numpy import array
 from typing import TYPE_CHECKING, Callable, Optional, Type
 
 import numpy as np
@@ -328,15 +329,20 @@ def tensor_zip(
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
+        append_strides = [0] * (len(out_strides) - len(a_strides))
+        a_strides_appended = array([*append_strides, *a_strides])
+        append_strides = [0] * (len(out_strides) - len(b_strides))
+        b_strides_appended = array([*append_strides, *b_strides])
+
         out_index = np.array([0] * len(out_shape))
         a_index = np.array([0] * len(out_shape))
         b_index = np.array([0] * len(out_shape))
         for i in range(len(out)):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, a_shape, a_index)
-            a_ordinal = index_to_position(a_index, a_strides)
+            a_ordinal = index_to_position(a_index, a_strides_appended)
             broadcast_index(out_index, out_shape, b_shape, b_index)
-            b_ordinal = index_to_position(b_index, b_strides)
+            b_ordinal = index_to_position(b_index, b_strides_appended)
             out[i] = fn(a_storage[a_ordinal], b_storage[b_ordinal])
 
     return _zip

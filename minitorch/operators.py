@@ -189,13 +189,16 @@ def zipWith(func: Callable, iterable1: Iterable, iterable2: Iterable) -> Iterabl
             break
 
 
-def reduce(func: Callable, iterable: Iterable) -> Union[int, float]:
+def reduce(
+    func: Callable, iterable: Iterable, init_val: Union[int, float] = 0.0
+) -> Union[int, float]:
     """Reduces an iterable to a single value using the given function 'func'.
 
     Args:
     ----
         func: A function that takes two arguments and returns a single value.
         iterable: An iterable to reduce.
+        init_val: Initial value of reduce
 
     Returns:
     -------
@@ -203,16 +206,12 @@ def reduce(func: Callable, iterable: Iterable) -> Union[int, float]:
 
     """
     iterator = iter(iterable)
-
-    try:
-        accumulator = next(iterator)
-    except StopIteration:
-        raise TypeError("reduce() of empty sequence with no initial value")
+    output = init_val
 
     for item in iterator:
-        accumulator = func(accumulator, item)
+        output = func(output, item)
 
-    return accumulator
+    return output
 
 
 def negList(iterable: Iterable) -> Iterable:
@@ -260,7 +259,7 @@ def sum(iterable: Iterable) -> Union[int, float]:
 
     """
     try:
-        return reduce(lambda x, y: x + y, iterable)
+        return reduce(lambda x, y: x + y, iterable, 0)
     except TypeError:
         return 0
 
@@ -277,4 +276,4 @@ def prod(iterable: Iterable) -> Union[int, float]:
         The product of all elements in the list.
 
     """
-    return reduce(lambda x, y: x * y, iterable)
+    return reduce(lambda x, y: x * y, iterable, 1)
