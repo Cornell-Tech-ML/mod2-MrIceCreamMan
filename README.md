@@ -19,39 +19,39 @@ The files that will be synced are:
         minitorch/operators.py minitorch/module.py minitorch/autodiff.py minitorch/scalar.py minitorch/scalar_functions.py minitorch/module.py project/run_manual.py project/run_scalar.py project/datasets.py
 
 # Dataset - Simple
-The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024//assets/simple.csv).
+The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master//assets/simple.csv). Epoch 500/500. Time per epoch: 0.079s.
 <table>
   <tr>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/simple_image.png" width="100%"/></td>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/simple_plot.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/simple_image.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/simple_plot.png" width="100%"/></td>
   </tr>
 </table>
 
 # Dataset - Diag
-The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024//assets/diag.csv).
+The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master//assets/diag.csv). Epoch 500/500. Time per epoch: 0.079s.
 <table>
   <tr>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/diag_image.png" width="100%"/></td>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/diag_plot.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/diag_image.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/diag_plot.png" width="100%"/></td>
   </tr>
 </table>
 
 # Dataset - Split
-The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024//assets/split.csv).
+The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master//assets/split.csv). Epoch 1500/1500. Time per epoch: 0.080s
 <table>
   <tr>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/split_image.png" width="100%"/></td>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/split_plot.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/split_image.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/split_plot.png" width="100%"/></td>
   </tr>
 </table>
 
 
 # Dataset - Xor
-The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024//assets/xor.csv).
+The Logs can be found [here](https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master//assets/xor.csv). Epoch 1500/1500. Time per epoch: 0.080s
 <table>
   <tr>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/xor_image.png" width="100%"/></td>
-    <td><img src="https://github.com/Cornell-Tech-ML/mod1-MrIceCreamMan/blob/2024/assets/xor_plot.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/xor_image.png" width="100%"/></td>
+    <td><img src="https://github.com/Cornell-Tech-ML/mod2-MrIceCreamMan/blob/master/assets/xor_plot.png" width="100%"/></td>
   </tr>
 </table>
 
